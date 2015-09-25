@@ -13,6 +13,7 @@
 
 package org.activiti.explorer.ui.login;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +23,8 @@ import org.activiti.engine.IdentityService;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.User;
 import org.activiti.engine.impl.identity.Authentication;
+import org.activiti.engine.impl.persistence.entity.GroupEntity;
+import org.activiti.engine.impl.persistence.entity.UserEntity;
 import org.activiti.explorer.Constants;
 import org.activiti.explorer.ExplorerApp;
 import org.activiti.explorer.identity.LoggedInUser;
@@ -90,7 +93,21 @@ public class DefaultLoginHandler implements LoginHandler {
   
   public LoggedInUser authenticate(HttpServletRequest request, HttpServletResponse response) {
     // No automatic authentication is used by default, always through credentials.
-    return null;
+      User hawtioUser = new UserEntity();
+      hawtioUser.setId((String) request.getSession().getAttribute("hawtio-user"));
+      hawtioUser.setFirstName((String) request.getSession().getAttribute("hawtio-user"));
+      LoggedInUser loggedInUser = new LoggedInUserImpl(hawtioUser, null);
+      List<Group> groups = new ArrayList<Group>();
+      Group admGroup = new GroupEntity();
+
+      admGroup.setId(Constants.SECURITY_ROLE_ADMIN);
+      admGroup.setName("admin");
+      admGroup.setType(Constants.SECURITY_ROLE);
+      groups.add(admGroup);
+
+      loggedInUser.getGroups().addAll(groups);
+
+      return loggedInUser;
   }
   
   public void logout(LoggedInUser userToLogout) {
