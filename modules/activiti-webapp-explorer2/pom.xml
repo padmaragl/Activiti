@@ -20,6 +20,10 @@
 
   <repositories>
     <repository>
+      <id>mvnrepository</id>
+      <url>http://mvnrepository.com/artifact</url>
+    </repository>
+    <repository>
       <id>vaadin-addons</id>
       <url>http://maven.vaadin.com/vaadin-addons</url>
     </repository>
@@ -35,6 +39,57 @@
           <target>1.6</target>
         </configuration>
       </plugin>
+      <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+                </configuration>
+            </plugin>
+            <!--
+                Enable support for non-bundle packaging types
+                See: http://felix.apache.org/site/apache-felix-maven-bundle-plugin-bnd.html
+            -->
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                        <configuration>
+                            <instructions>
+                                <Bundle-SymbolicName>activiti-web-explorer2</Bundle-SymbolicName>
+                                <Export-Package/>
+                                <Import-Package>javax.servlet,javax.servlet.http,javax.servlet.*,javax.servlet.jsp.*,javax.servlet.jsp.jstl.*</Import-Package>
+                                <DynamicImport-Package>javax.*, org.xml.sax, org.xml.sax.*, org.w3c.*</DynamicImport-Package>
+                                <Bundle-ClassPath>.,WEB-INF/classes</Bundle-ClassPath>
+                                <Embed-Directory>WEB-INF/lib</Embed-Directory>
+                                <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
+                                <Embed-Transitive>true</Embed-Transitive>
+                                <Web-ContextPath>activiti-explorer</Web-ContextPath>
+                                <Webapp-Context>activiti-explorer</Webapp-Context>
+                            </instructions>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <supportedProjectTypes>
+                        <supportedProjectType>jar</supportedProjectType>
+                        <supportedProjectType>bundle</supportedProjectType>
+                        <supportedProjectType>war</supportedProjectType>
+                    </supportedProjectTypes>
+                    <instructions>
+                        <!-- ... etc ... -->
+                    </instructions>
+                </configuration>
+            </plugin>
+      <!--      
       <plugin>
         <groupId>org.zeroturnaround</groupId>
         <artifactId>jrebel-maven-plugin</artifactId>
@@ -57,6 +112,7 @@
           </descriptors>
         </configuration>
       </plugin>
+      -->
 
       <!-- A simple Jetty test server at http://localhost:8080/activiti-webapp-explorer2 
         can be launched with the Maven goal jetty:run and stopped with jetty:stop -->
@@ -184,6 +240,14 @@
       <groupId>org.activiti</groupId>
       <artifactId>activiti-modeler</artifactId>
       <exclusions>
+        <exclusion>
+          <groupId>xml-apis</groupId>
+          <artifactId>xml-apis</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>xml-apis-ext</groupId>
+          <artifactId>xml-apis-ext</artifactId>
+        </exclusion>
         <exclusion>
           <groupId>xalan</groupId>
           <artifactId>xalan</artifactId>

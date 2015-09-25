@@ -26,12 +26,14 @@ public class ExplorerFilter implements Filter {
     ignoreList.add("/libs");
     ignoreList.add("/service");
     ignoreList.add("/diagram-viewer");
+    ignoreList.add("/whitelist");
   }
 
   @Override
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
     HttpServletRequest req = (HttpServletRequest) request;
     String path = req.getRequestURI().substring(req.getContextPath().length());
+    System.out.println("Path called is : " + path);
     int indexSlash = path.indexOf("/", 1);
     String firstPart = null;
     if (indexSlash > 0) {
